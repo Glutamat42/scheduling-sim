@@ -11,6 +11,9 @@
 struct Process {
     int duration{};
     int remaining = 0;
+    int start=0;
+    int interval{};
+    int deadline{};
 };
 
 class Scheduler {
