@@ -4,11 +4,11 @@
 #include "RMS.h"
 
 int main() {
-    int selection = 2;
+    int selection;
     Scheduler* scheduler;
 
     std::cout << "Select scheduler\n1) Round Robin\n2) RMS" << std::endl;
-//    std::cin >> selection;
+    std::cin >> selection;
 
     switch (selection) {
         case 1:
@@ -23,6 +23,8 @@ int main() {
     }
 
     scheduler->run();
+
+
 
 
     return 0;

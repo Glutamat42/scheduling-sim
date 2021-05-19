@@ -6,14 +6,19 @@
 #define SCHEDULING_SIM_RMS_H
 
 
+#include <string>
+#include <iostream>
 #include "Scheduler.h"
+#include "VisualizeSchedule.h"
 
 class RMS: public Scheduler {
 private:
     int curStep = -1;
-    int stopAfterSteps = 20;
+    int stopAfterSteps = 35;
     std::vector<int> priorityList;
     int chooseNextTask() override;
+
+    VisualizeSchedule vs;
 public:
     explicit RMS(std::vector <Process> processes);
 

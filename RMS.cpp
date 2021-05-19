@@ -2,17 +2,18 @@
 // Created by markus on 19.05.21.
 //
 
-#include <string>
-#include <iostream>
 #include "RMS.h"
 
-RMS::RMS(std::vector<Process> processes) : Scheduler(processes) {
+RMS::RMS(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(this->stopAfterSteps,processes.size())) {
+    this->vs.windowTitle = "RMS Scheduler";
+
+    // generate priority list
     for (int i = 0; i < processes.size(); ++i) {
         if (this->priorityList.empty()) {
             this->priorityList.push_back(i);
         } else {
             for (int j = 0; j < this->priorityList.size(); ++j) {
-                if (processes[this->priorityList[j]].duration > processes[i].duration) {
+                if (processes[this->priorityList[j]].interval > processes[i].interval) {
                     this->priorityList.insert(this->priorityList.begin()+j, i);
                     break;
                 } else if (this->priorityList.size() - 1 == j) {
@@ -25,8 +26,18 @@ RMS::RMS(std::vector<Process> processes) : Scheduler(processes) {
 
     std::cout << "priorityList: " << std::endl;
     for (int index: this->priorityList) {
-        std::cout << index << " - 1/" << processes[index].duration << std::endl;
+        std::cout << index << " - 1/" << processes[index].interval << std::endl;
     }
+
+    // generate labels for visualization
+    std::vector<std::string> primLabels;
+    std::vector<std::string> secLabels;
+    for (int i = 0; i < this->processes.size(); ++i) {
+        primLabels.push_back(std::string("T" + std::to_string(i)));
+        secLabels.push_back(std::string("1/" + std::to_string(processes[i].interval)));
+    }
+    this->vs.setPrimaryLabels(primLabels);
+    this->vs.setSecondaryLabels(secLabels);
 }
 
 int RMS::chooseNextTask() {
@@ -35,11 +46,13 @@ int RMS::chooseNextTask() {
     for (int i = 0; i < this->processes.size(); ++i) {
         // deadline
         if ((this->curStep - this->processes[i].start) % this->processes[i].deadline == 0 && this->processes[i].remaining > 0) {
+            vs.setBGColor(cv::Point2i(this->curStep, i), Colors::red);
             std::cout << i << " failed deadline" << std::endl;
         }
 
         // interval
         if ((this->curStep - this->processes[i].start) % this->processes[i].interval == 0) {
+            vs.setLeftBorderColor(cv::Point2i (this->curStep, i), Colors::green);
             this->processes[i].remaining += this->processes[i].duration;
         }
     }
@@ -47,6 +60,7 @@ int RMS::chooseNextTask() {
     // find next job
     for (int index: this->priorityList) {
         if (this->processes[index].remaining > 0) {
+            vs.setCross(cv::Point2i(this->curStep, index), true);
             return index;
         }
     }
@@ -56,7 +70,7 @@ int RMS::chooseNextTask() {
 }
 
 void RMS::run() {
-    while (this->curStep < this->stopAfterSteps) {
+    while (this->curStep < this->stopAfterSteps - 1) {
         int nextPid = this->chooseNextTask();
         if (nextPid == -1) {
             std::cout << "currently nothing to do" << std::endl;
@@ -72,6 +86,9 @@ void RMS::run() {
 
         std::cout << "-----------------" << std::endl;
     }
+
+
+    vs.show();
 }
 
 std::vector<std::string> split(const std::string& str, const std::string& delim)
@@ -91,34 +108,26 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
 }
 
 std::vector<Process> RMS::getProcessesFromCin() {
-    std::vector<Process> plist;
-    Process p1 = Process();
-    p1.start = 0;
-    p1.duration = 4;
-    p1.interval = 8;
-    p1.deadline = 8;
-    Process p2 = Process();
-    p2.start = 3;
-    p2.duration = 1;
-    p2.interval = 5;
-    p2.deadline = 5;
-    Process p3 = Process();
-    p3.start = 5;
-    p3.duration = 2;
-    p3.interval = 20;
-    p3.deadline = 20;
-    Process p4 = Process();
-    p4.start = 0;
-    p4.duration = 3;
-    p4.interval = 40;
-    p4.deadline = 40;
-    plist.push_back(p4);
-    plist.push_back(p2);
-    plist.push_back(p3);
-    plist.push_back(p1);
-    return plist;
-
-
+//    std::vector<Process> plist;
+//    Process p1 = Process();
+//    p1.start = 0;
+//    p1.duration = 2;
+//    p1.interval = 5;
+//    p1.deadline = 5;
+//    Process p2 = Process();
+//    p2.start = 3;
+//    p2.duration = 3;
+//    p2.interval = 6;
+//    p2.deadline = 6;
+//    Process p3 = Process();
+//    p3.start = 5;
+//    p3.duration = 1;
+//    p3.interval = 10;
+//    p3.deadline = 10;
+//    plist.push_back(p1);
+//    plist.push_back(p2);
+//    plist.push_back(p3);
+//    return plist;
 
 
     std::vector<Process> processes;
@@ -144,11 +153,7 @@ std::vector<Process> RMS::getProcessesFromCin() {
             newProcess.duration = std::stoi(parsedLine[1]);
             newProcess.interval = std::stoi(parsedLine[2]);
             newProcess.deadline = std::stoi(parsedLine[3]);
-            if (newProcess.start == 0) {
-                newProcess.remaining = newProcess.duration;
-            } else {
-                newProcess.remaining = 0;
-            }
+            newProcess.remaining = 0;
 
             processes.push_back(newProcess);
         }

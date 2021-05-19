@@ -20,6 +20,7 @@ class Scheduler {
 protected:
     std::vector<Process> processes;
     virtual int chooseNextTask() = 0;
+
 public:
     explicit Scheduler(std::vector<Process> processes);
     virtual void run() = 0;
