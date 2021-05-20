@@ -4,7 +4,6 @@
 
 #include "RoundRobin.h"
 
-#include <utility>
 #include <iostream>
 
 RoundRobin::RoundRobin(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(10, processes.size())) {

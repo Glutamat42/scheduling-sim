@@ -3,6 +3,11 @@ This project is part of my lecture Real-time Systems. It implements demos for di
 
 This project is (and probably will be forever) work in progress.
 
+## Build
+Requirements: cmake, opencv, gcc
+
+Run `cmake .` followed by `make`. After that the sim can be run by calling the build artifact, eg `./scheduling_sim`.
+
 ## Currently implemented Schedulers
 This list might be incomplete in the future. See commits or main.cpp for a complete list.
 

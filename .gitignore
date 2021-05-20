@@ -1,2 +1,9 @@
 /cmake-build-debug
 /.idea
+/CMakeFiles
+/Testing
+/cmake_install.cmake
+/CMakeCache.txt
+/Makefile
+/scheduling_sim
+/scheduling_sim.cbp
