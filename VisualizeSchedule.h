@@ -41,18 +41,35 @@ private:
 public:
     std::string windowTitle = "Schedule";
 
+    /**
+     * @param size shape of elements (columns/steps, processes)
+     */
     explicit VisualizeSchedule(cv::Point2i size);
 
+    /** set background color of cell pos
+     *
+     */
     void setBGColor(cv::Point2i pos, cv::Scalar color);
 
     void setLeftBorderColor(cv::Point2i pos, cv::Scalar color);
 
+    /** cross-marker in cell
+     */
     void setCross(cv::Point2i pos, bool newState);
 
     void setPrimaryLabels(std::vector<std::string> labels);
 
     void setSecondaryLabels(std::vector<std::string> labels);
 
+    /** add or remove columns from/to current object
+     *
+     * @param n number of new columns; negative to remove columns
+     */
+    void resizeColumns(int n=1);
+
+    cv::Point2i getMatrixBounds();
+
+    /** render */
     void show();
 };
 

@@ -99,6 +99,15 @@ void VisualizeSchedule::setSecondaryLabels(std::vector<std::string> labels) {
     this->secondaryLabels = labels;
 }
 
+void VisualizeSchedule::resizeColumns(int n) {
+    this->matrixBounds.x += n;
+    this->matrix.resize(this->matrixBounds.x, std::vector<MapField>(this->matrixBounds.y, MapField()));
+}
+
+cv::Point2i VisualizeSchedule::getMatrixBounds() {
+    return this->matrixBounds;
+}
+
 cv::Mat MapField::draw() {
     int imageWidth = (FIELD_WIDTH + 2 * BORDER_WIDTH + 1);
     int imageHeight = (FIELD_HEIGHT + 2 * BORDER_WIDTH + 1);

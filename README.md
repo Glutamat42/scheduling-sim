@@ -20,7 +20,7 @@ empty line if finished
 > 0,2,5,5
 > 3,3,6,6
 > 5,1,10,10
-
+> 
 priorityList: 
 0 - 1/5
 1 - 1/6
@@ -43,4 +43,28 @@ pid: 2 Time remaining: 0 Time needed: 1
 ```
 
 ### Round Robin
-implemented ...
+![visualization of Round Robin](docs/images/example_rr_visualization.png)
+```
+Enter tasks in following format: duration
+empty line if finished
+> 2
+> 6
+> 6
+> 6
+> 4
+> 
+pid: 0 Time computed: 1 Time needed: 2
+pid: 1 Time computed: 0 Time needed: 6
+pid: 2 Time computed: 0 Time needed: 6
+pid: 3 Time computed: 0 Time needed: 6
+pid: 4 Time computed: 0 Time needed: 4
+-----------------
+...
+pid: 0 Time computed: 2 Time needed: 2
+pid: 1 Time computed: 1 Time needed: 6
+pid: 2 Time computed: 1 Time needed: 6
+pid: 3 Time computed: 1 Time needed: 6
+pid: 4 Time computed: 1 Time needed: 4
+0 finished
+...
+```

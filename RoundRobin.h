@@ -7,10 +7,12 @@
 
 
 #include "Scheduler.h"
+#include "VisualizeSchedule.h"
 
 class RoundRobin: public Scheduler{
 private:
     int lastPid = -1;
+    VisualizeSchedule vs;
     int chooseNextTask() override;
 public:
     explicit RoundRobin(std::vector <Process> processes);
