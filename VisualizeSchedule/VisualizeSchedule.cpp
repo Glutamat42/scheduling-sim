@@ -4,11 +4,6 @@
 
 #include "VisualizeSchedule.h"
 
-unsigned int FIELD_WIDTH = 26;
-unsigned int FIELD_HEIGHT = 26;
-unsigned int BORDER_WIDTH = 4;
-unsigned int TABLE_BORDER_WIDTH = 3;
-
 
 VisualizeSchedule::VisualizeSchedule(cv::Point2i size) {
     this->matrix.resize(size.x, std::vector<MapField>(size.y, MapField()));
@@ -49,18 +44,14 @@ void VisualizeSchedule::show() {
     // create blank image
     cv::Mat image = cv::Mat::zeros(totalHeight, totalWidth, CV_8UC3);
 
+    // create background of table (cell borders)
+    cv::rectangle(image, cv::Point2i(0,0), cv::Point2i(tableWidth, tableHeight), Colors::gray, cv::FILLED);
 
-    // borders of last row and column
-    cv::rectangle(image, cv::Point2i(0, tableHeight - TABLE_BORDER_WIDTH), cv::Point2i (tableWidth, tableHeight), Colors::gray, TABLE_BORDER_WIDTH);
-    cv::rectangle(image, cv::Point2i(tableWidth - TABLE_BORDER_WIDTH, 0), cv::Point2i (tableWidth, tableHeight), Colors::gray, TABLE_BORDER_WIDTH);
+    // draw cells
     for (int x = 0; x < this->matrixBounds.x; ++x) {
         int x_offset = x * fieldTotalWidth;
-        cv::rectangle(image, cv::Point2i(x_offset, 0), cv::Point2i (x_offset + TABLE_BORDER_WIDTH, tableHeight), Colors::gray, cv::FILLED); // vertical table lines
-
         for (int y = 0; y < this->matrixBounds.y; ++y) {
             int y_offset = y * fieldTotalHeight;
-            cv::rectangle(image, cv::Point2i(x_offset, y_offset), cv::Point2i (x_offset + fieldTotalWidth, y_offset + TABLE_BORDER_WIDTH), Colors::gray, cv::FILLED); // horizontal table lines
-
             cv::Mat currentTile = this->matrix[x][y].draw();
             currentTile.copyTo(image(cv::Rect(x_offset + TABLE_BORDER_WIDTH, y_offset + TABLE_BORDER_WIDTH,currentTile.cols, currentTile.rows)));
         }
@@ -108,38 +99,3 @@ cv::Point2i VisualizeSchedule::getMatrixBounds() {
     return this->matrixBounds;
 }
 
-cv::Mat MapField::draw() {
-    int imageWidth = (FIELD_WIDTH + 2 * BORDER_WIDTH + 1);
-    int imageHeight = (FIELD_HEIGHT + 2 * BORDER_WIDTH + 1);
-    cv::Mat img = cv::Mat::zeros(imageHeight, imageWidth, CV_8UC3);
-
-    // bg
-    cv::rectangle(img,cv::Point2i (0,0),cv::Point2i (imageWidth,imageHeight),this->color_bg,cv::FILLED);
-
-    // left border
-    if(this->color_left_enabled) {
-        cv::rectangle(img, cv::Point2i(0, 0), cv::Point2i(BORDER_WIDTH, imageHeight), this->color_left, cv::FILLED);
-    }
-
-    // cross
-    if (this->cross) {
-        cv::line(img, cv::Point2i(BORDER_WIDTH + 3, BORDER_WIDTH + 3), cv::Point2i(BORDER_WIDTH + FIELD_WIDTH - 3, BORDER_WIDTH + FIELD_HEIGHT - 3),
-                 cv::Scalar(0, 0, 0), 2);
-        cv::line(img, cv::Point2i(BORDER_WIDTH + FIELD_WIDTH - 3, BORDER_WIDTH + 3), cv::Point2i(BORDER_WIDTH + 3, BORDER_WIDTH + FIELD_HEIGHT - 3),
-                 cv::Scalar(0, 0, 0), 2);
-    }
-
-    return img;
-}
-
-void MapField::setColorLeft(cv::Scalar color) {
-    this->color_left_enabled = true;
-    this->color_left = color;
-}
-
-
-const cv::Scalar Colors::black = cv::Scalar (0,0,0);
-const cv::Scalar Colors::gray = cv::Scalar (200,200,200);
-const cv::Scalar Colors::red = cv::Scalar (0,0,255);
-const cv::Scalar Colors::green = cv::Scalar (20,200,20);
-const cv::Scalar Colors::white = cv::Scalar (255,255,255);

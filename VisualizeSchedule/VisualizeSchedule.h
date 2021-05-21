@@ -8,29 +8,10 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+#include "constants.h"
+#include "MapField.h"
+#include "Colors.h"
 
-struct Colors {
-    static const cv::Scalar black;
-    static const cv::Scalar gray;
-    static const cv::Scalar red;
-    static const cv::Scalar green;
-    static const cv::Scalar white;
-};
-
-
-class MapField {
-private:
-    bool color_left_enabled = false;
-    cv::Scalar color_left = CV_RGB(255, 255, 255);
-
-public:
-    cv::Scalar color_bg = CV_RGB(255, 255, 255);
-    bool cross = false;
-
-    void setColorLeft(cv::Scalar color);
-
-    cv::Mat draw();
-};
 
 class VisualizeSchedule {
 private:

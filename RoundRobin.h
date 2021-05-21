@@ -7,7 +7,7 @@
 
 
 #include "Scheduler.h"
-#include "VisualizeSchedule.h"
+#include "VisualizeSchedule/VisualizeSchedule.h"
 
 class RoundRobin: public Scheduler{
 private:

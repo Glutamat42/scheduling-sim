@@ -9,7 +9,7 @@
 #include <string>
 #include <iostream>
 #include "Scheduler.h"
-#include "VisualizeSchedule.h"
+#include "VisualizeSchedule/VisualizeSchedule.h"
 
 class RMS: public Scheduler {
 private:

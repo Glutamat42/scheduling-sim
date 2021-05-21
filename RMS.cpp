@@ -108,39 +108,17 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
 }
 
 std::vector<Process> RMS::getProcessesFromCin() {
-//    std::vector<Process> plist;
-//    Process p1 = Process();
-//    p1.start = 0;
-//    p1.duration = 2;
-//    p1.interval = 5;
-//    p1.deadline = 5;
-//    Process p2 = Process();
-//    p2.start = 3;
-//    p2.duration = 3;
-//    p2.interval = 6;
-//    p2.deadline = 6;
-//    Process p3 = Process();
-//    p3.start = 5;
-//    p3.duration = 1;
-//    p3.interval = 10;
-//    p3.deadline = 10;
-//    plist.push_back(p1);
-//    plist.push_back(p2);
-//    plist.push_back(p3);
-//    return plist;
-
-
     std::vector<Process> processes;
     bool finished = false;
-    std::cout << "Enter tasks in following format: start,duration,interval,deadline (comma separated, no space)" << "\nempty line if finished" << std::endl;
+    std::cout << "Enter tasks in following format: start,duration,interval,deadline (comma separated, no space)" << "\nempty line if finished\nIf you dont enter any data (press return without entering data) some example data will be used" << std::endl;
+
+    std::cin.ignore(); // remove what ever might still be in stdin buffer. Another way would be cin.get()
+
     while (!finished) {
         std::string line;
         std::getline(std::cin, line);
 
         if (line.empty()) {
-            if (processes.empty()) {
-                continue;
-            }
             finished = true;
         } else {
             // parse process line
@@ -158,6 +136,29 @@ std::vector<Process> RMS::getProcessesFromCin() {
             processes.push_back(newProcess);
         }
     }
+
+    // add dummy values if user did not provide any values
+    if (processes.empty()) {
+        Process p1 = Process();
+        p1.start = 0;
+        p1.duration = 2;
+        p1.interval = 5;
+        p1.deadline = 5;
+        Process p2 = Process();
+        p2.start = 3;
+        p2.duration = 3;
+        p2.interval = 6;
+        p2.deadline = 6;
+        Process p3 = Process();
+        p3.start = 5;
+        p3.duration = 1;
+        p3.interval = 10;
+        p3.deadline = 10;
+        processes.push_back(p1);
+        processes.push_back(p2);
+        processes.push_back(p3);
+    }
+
     return processes;
 }
 
