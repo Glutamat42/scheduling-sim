@@ -24,6 +24,7 @@ protected:
 public:
     explicit Scheduler(std::vector<Process> processes);
     virtual void run() = 0;
+    static std::vector<Process> getProcessesFromCin();
 };
 
 #endif //SCHEDULING_SIM_SCHEDULER_H

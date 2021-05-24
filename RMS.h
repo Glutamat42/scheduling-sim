@@ -17,14 +17,13 @@ private:
     int stopAfterSteps = 35;
     std::vector<int> priorityList;
     int chooseNextTask() override;
+    void checkLL();
 
     VisualizeSchedule vs;
 public:
     explicit RMS(std::vector <Process> processes);
 
     void run() override;
-
-    static std::vector<Process> getProcessesFromCin();
 };
 
 

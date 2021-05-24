@@ -18,8 +18,6 @@ public:
     explicit RoundRobin(std::vector <Process> processes);
 
     void run() override;
-
-    static std::vector<Process> getProcessesFromCin();
 };
 
 

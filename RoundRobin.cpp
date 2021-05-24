@@ -8,6 +8,13 @@
 
 RoundRobin::RoundRobin(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(10, processes.size())) {
     this->vs.windowTitle = "Round Robin";
+    for (int i = 0; i < this->processes.size(); ++i) {
+        if (this->processes[i].start == 0) {
+            this->processes[i].remaining = this->processes[i].duration;
+        } else {
+            std::cout << "start time > 0 is not implemented. Task will not be executed!" << std::endl;
+        }
+    }
 }
 
 int RoundRobin::chooseNextTask() {
@@ -31,31 +38,6 @@ int RoundRobin::chooseNextTask() {
     }
     // no processes left -> finished
     return -1;
-}
-
-std::vector<Process> RoundRobin::getProcessesFromCin() {
-    std::vector<Process> processes;
-    bool finished = false;
-    std::cout << "Enter tasks in following format: duration" << "\nempty line if finished" << std::endl;
-    while (!finished) {
-        std::string line;
-        std::getline(std::cin, line);
-
-        if (line.empty()) {
-            if (processes.empty()) {
-                continue;
-            }
-            finished = true;
-        } else {
-            // parse process line
-            Process newProcess = Process();
-            newProcess.duration = std::stoi(line);
-            newProcess.remaining = newProcess.duration;
-
-            processes.push_back(newProcess);
-        }
-    }
-    return processes;
 }
 
 void RoundRobin::run() {

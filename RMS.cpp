@@ -38,7 +38,11 @@ RMS::RMS(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(
     }
     this->vs.setPrimaryLabels(primLabels);
     this->vs.setSecondaryLabels(secLabels);
+
+    this->checkLL();
 }
+
+
 
 int RMS::chooseNextTask() {
     this->curStep++;
@@ -91,74 +95,25 @@ void RMS::run() {
     vs.show();
 }
 
-std::vector<std::string> split(const std::string& str, const std::string& delim)
-{
-    std::vector<std::string> tokens;
-    size_t prev = 0, pos = 0;
-    do
-    {
-        pos = str.find(delim, prev);
-        if (pos == std::string::npos) pos = str.length();
-        std::string token = str.substr(prev, pos-prev);
-        if (!token.empty()) tokens.push_back(token);
-        prev = pos + delim.length();
-    }
-    while (pos < str.length() && prev < str.length());
-    return tokens;
-}
-
-std::vector<Process> RMS::getProcessesFromCin() {
-    std::vector<Process> processes;
-    bool finished = false;
-    std::cout << "Enter tasks in following format: start,duration,interval,deadline (comma separated, no space)" << "\nempty line if finished\nIf you dont enter any data (press return without entering data) some example data will be used" << std::endl;
-
-    std::cin.ignore(); // remove what ever might still be in stdin buffer. Another way would be cin.get()
-
-    while (!finished) {
-        std::string line;
-        std::getline(std::cin, line);
-
-        if (line.empty()) {
-            finished = true;
-        } else {
-            // parse process line
-            Process newProcess = Process();
-            std::vector<std::string> parsedLine = split(line, ",");
-            if (parsedLine.size() != 4) {
-                throw std::invalid_argument("start,duration,interval,deadline");
-            }
-            newProcess.start = std::stoi(parsedLine[0]);
-            newProcess.duration = std::stoi(parsedLine[1]);
-            newProcess.interval = std::stoi(parsedLine[2]);
-            newProcess.deadline = std::stoi(parsedLine[3]);
-            newProcess.remaining = 0;
-
-            processes.push_back(newProcess);
-        }
+void RMS::checkLL() {
+    double utilization = 0;
+    for (Process p: this->processes) {
+        utilization += (double) p.duration / p.interval;
     }
 
-    // add dummy values if user did not provide any values
-    if (processes.empty()) {
-        Process p1 = Process();
-        p1.start = 0;
-        p1.duration = 2;
-        p1.interval = 5;
-        p1.deadline = 5;
-        Process p2 = Process();
-        p2.start = 3;
-        p2.duration = 3;
-        p2.interval = 6;
-        p2.deadline = 6;
-        Process p3 = Process();
-        p3.start = 5;
-        p3.duration = 1;
-        p3.interval = 10;
-        p3.deadline = 10;
-        processes.push_back(p1);
-        processes.push_back(p2);
-        processes.push_back(p3);
+    int n = this->processes.size();
+    double capacityLimit = n * (std::pow(2, (double)1/n) - 1);
+
+    std::cout << "\nutilization: " << utilization << " capacity limit: " << capacityLimit << " minimum capacity limit: 0,693" << std::endl;
+
+    if (utilization < capacityLimit) {
+        std::cout << "LL check successful" << std::endl;
+    } else {
+        std::cout << "LL check failed" << std::endl;
     }
 
-    return processes;
+    std::cout << "Press return to continue" << std::endl;
+//    std::string test;
+    std::cin.get();
 }
 
