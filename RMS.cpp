@@ -4,7 +4,39 @@
 
 #include "RMS.h"
 
-RMS::RMS(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(this->stopAfterSteps,processes.size())) {
+int RMS::getLeastRequiredSteps(std::vector<Process> processes) {
+    int latestStart = 0;
+    int leastDuration = 0;
+
+    if (!processes.empty()) {
+        latestStart = processes[0].start;
+        leastDuration = processes[0].interval;
+    }
+    if (processes.size() > 1) {
+        for (int i = 1; i < processes.size(); ++i) {
+            if (processes[i].start > latestStart) {
+                latestStart = processes[i].start;
+            }
+            leastDuration = std::lcm<int, int>(leastDuration, processes[i].interval);
+        }
+    }
+
+    std::cout << "at least "
+              << latestStart + leastDuration
+              << " steps are required, "
+              << latestStart
+              << " is the last starting process + "
+              << leastDuration
+              << " steps after all processes started"
+              << std::endl;
+
+    return latestStart + leastDuration;
+}
+
+
+RMS::RMS(std::vector<Process> processes) : Scheduler(processes) {
+    this->stopAfterSteps = RMS::getLeastRequiredSteps(processes);
+    this->vs = VisualizeSchedule(cv::Point2i(this->stopAfterSteps, processes.size()));
     this->vs.windowTitle = "RMS Scheduler";
 
     // generate priority list
@@ -14,7 +46,7 @@ RMS::RMS(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(
         } else {
             for (int j = 0; j < this->priorityList.size(); ++j) {
                 if (processes[this->priorityList[j]].interval > processes[i].interval) {
-                    this->priorityList.insert(this->priorityList.begin()+j, i);
+                    this->priorityList.insert(this->priorityList.begin() + j, i);
                     break;
                 } else if (this->priorityList.size() - 1 == j) {
                     this->priorityList.push_back(i);
@@ -42,8 +74,6 @@ RMS::RMS(std::vector<Process> processes) : Scheduler(processes), vs(cv::Point2i(
     this->checkLL();
 }
 
-
-
 int RMS::chooseNextTask() {
     this->curStep++;
     // update remaining times and check deadlines
@@ -56,7 +86,7 @@ int RMS::chooseNextTask() {
 
         // interval
         if ((this->curStep - this->processes[i].start) % this->processes[i].interval == 0) {
-            vs.setLeftBorderColor(cv::Point2i (this->curStep, i), Colors::green);
+            vs.setLeftBorderColor(cv::Point2i(this->curStep, i), Colors::green);
             this->processes[i].remaining += this->processes[i].duration;
         }
     }
@@ -102,7 +132,7 @@ void RMS::checkLL() {
     }
 
     int n = this->processes.size();
-    double capacityLimit = n * (std::pow(2, (double)1/n) - 1);
+    double capacityLimit = n * (std::pow(2, (double) 1 / n) - 1);
 
     std::cout << "\nutilization: " << utilization << " capacity limit: " << capacityLimit << " minimum capacity limit: 0,693" << std::endl;
 

@@ -27,6 +27,8 @@ public:
      */
     explicit VisualizeSchedule(cv::Point2i size);
 
+    VisualizeSchedule() : VisualizeSchedule(cv::Point2i(0,0)) {}
+
     /** set background color of cell pos
      *
      */

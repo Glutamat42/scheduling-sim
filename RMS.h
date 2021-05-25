@@ -8,6 +8,7 @@
 
 #include <string>
 #include <iostream>
+#include <numeric>
 #include "Scheduler.h"
 #include "VisualizeSchedule/VisualizeSchedule.h"
 
@@ -16,10 +17,11 @@ private:
     int curStep = -1;
     int stopAfterSteps = 35;
     std::vector<int> priorityList;
-    int chooseNextTask() override;
-    void checkLL();
-
     VisualizeSchedule vs;
+
+    void checkLL();
+    int chooseNextTask() override;
+    static int getLeastRequiredSteps(std::vector<Process> processes);
 public:
     explicit RMS(std::vector <Process> processes);
 
