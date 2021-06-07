@@ -2,8 +2,6 @@
 // Created by markus on 19.05.21.
 //
 
-#include <string>
-#include <iostream>
 #include "Scheduler.h"
 
 Scheduler::Scheduler(std::vector<Process> processes) {
@@ -69,17 +67,17 @@ std::vector<Process> Scheduler::getProcessesFromCin() {
         Process p2 = Process();
         Process p3 = Process();
 //        p1.start = 0;
-//        p1.duration = 2;
-//        p1.interval = 5;
-//        p1.deadline = 5;
-//        p2.start = 3;
-//        p2.duration = 3;
-//        p2.interval = 6;
-//        p2.deadline = 6;
-//        p3.start = 5;
-//        p3.duration = 1;
-//        p3.interval = 10;
-//        p3.deadline = 10;
+//        p1.duration = 1;
+//        p1.interval = 3;
+//        p1.deadline = 3;
+//        p2.start = 0;
+//        p2.duration = 2;
+//        p2.interval = 5;
+//        p2.deadline = 5;
+//        p3.start = 0;
+//        p3.duration = 2;
+//        p3.interval = 9;
+//        p3.deadline = 9;
         p1.start = 0;
         p1.duration = 2;
         p1.interval = 10;
@@ -98,4 +96,33 @@ std::vector<Process> Scheduler::getProcessesFromCin() {
     }
 
     return processes;
+}
+
+int Scheduler::getLeastRequiredSteps(std::vector<Process> processes) {
+    int latestStart = 0;
+    int leastDuration = 0;
+
+    if (!processes.empty()) {
+        latestStart = processes[0].start;
+        leastDuration = processes[0].interval;
+    }
+    if (processes.size() > 1) {
+        for (int i = 1; i < processes.size(); ++i) {
+            if (processes[i].start > latestStart) {
+                latestStart = processes[i].start;
+            }
+            leastDuration = std::lcm<int, int>(leastDuration, processes[i].interval);
+        }
+    }
+
+    std::cout << "at least "
+              << latestStart + leastDuration
+              << " steps are required, "
+              << latestStart
+              << " is the last starting process + "
+              << leastDuration
+              << " steps after all processes started"
+              << std::endl;
+
+    return latestStart + leastDuration;
 }

@@ -7,6 +7,9 @@
 
 #include <utility>
 #include <vector>
+#include <string>
+#include <iostream>
+#include <numeric>
 
 struct Process {
     int duration{};
@@ -20,6 +23,7 @@ class Scheduler {
 protected:
     std::vector<Process> processes;
 
+    static int getLeastRequiredSteps(std::vector<Process> processes);
     virtual int chooseNextTask() = 0;
 
 public:

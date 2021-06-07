@@ -21,7 +21,6 @@ private:
 
     void checkLL();
     int chooseNextTask() override;
-    static int getLeastRequiredSteps(std::vector<Process> processes);
 public:
     explicit RMS(std::vector <Process> processes);
 

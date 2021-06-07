@@ -1,13 +1,13 @@
 //
-// Created by markus on 06.06.21.
+// Created by markus on 07.06.21.
 //
 
-#include "EDS.h"
+#include "LLF.h"
 
-EDS::EDS(std::vector<Process> processes) : Scheduler(processes) {
-    this->stopAfterSteps = EDS::getLeastRequiredSteps(processes);
+LLF::LLF(std::vector<Process> processes) : Scheduler(processes) {
+    this->stopAfterSteps = Scheduler::getLeastRequiredSteps(processes);
     this->vs = VisualizeSchedule(cv::Point2i(this->stopAfterSteps, processes.size()));
-    this->vs.windowTitle = "EDS Scheduler";
+    this->vs.windowTitle = "LLF Scheduler";
 
     // generate labels for visualization
     std::vector<std::string> primLabels;
@@ -17,18 +17,19 @@ EDS::EDS(std::vector<Process> processes) : Scheduler(processes) {
     this->vs.setPrimaryLabels(primLabels);
 }
 
-int EDS::chooseNextTask() {
+int LLF::chooseNextTask() {
     int pid = -1;
-    int deadline = INT32_MAX;
+    int laxity = INT32_MAX;
 
     for (int i = 0; i < this->processes.size(); ++i) {
-        int curPDeadline = ceil((double)(this->curStep - this->processes[i].start+1) / this->processes[i].deadline); // index of current interval
-        curPDeadline *= this->processes[i].deadline; // next deadline without delayed start
-        curPDeadline += this->processes[i].start; // next deadline with delayed start
-        curPDeadline -= 1;
-        if (this->processes[i].remaining > 0 && curPDeadline < deadline) {
+        int curPLaxity = ceil((double)(this->curStep - this->processes[i].start+1) / this->processes[i].deadline); // index of current interval
+        curPLaxity *= this->processes[i].deadline; // next deadline without delayed start
+        curPLaxity += this->processes[i].start; // next deadline with delayed start
+        curPLaxity -= 1;
+        curPLaxity -= this->curStep; //
+        if (this->processes[i].remaining > 0 && curPLaxity < laxity) {
             pid = i;
-            deadline = curPDeadline;
+            laxity = curPLaxity;
         }
     }
 
@@ -36,7 +37,7 @@ int EDS::chooseNextTask() {
     return pid;
 }
 
-void EDS::run() {
+void LLF::run() {
     while (this->curStep < this->stopAfterSteps - 1) {
         this->curStep++;
         // update remaining times and check deadlines
@@ -63,4 +64,3 @@ void EDS::run() {
 
     this->vs.show();
 }
-

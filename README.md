@@ -52,11 +52,11 @@ pid: 2 Time remaining: 0 Time needed: 1
 ```
 Enter tasks in following format: duration
 empty line if finished
-> 2
-> 6
-> 6
-> 6
-> 4
+> 0,2
+> 0,6
+> 0,6
+> 0,6
+> 0,4
 > 
 pid: 0 Time computed: 1 Time needed: 2
 pid: 1 Time computed: 0 Time needed: 6
@@ -72,4 +72,27 @@ pid: 3 Time computed: 1 Time needed: 6
 pid: 4 Time computed: 1 Time needed: 4
 0 finished
 ...
+```
+
+### EDS - Earliest Deadline First
+
+
+### LLF - Least Laxity First
+![LLF example](docs/images/LLF.png)
+```
+Select scheduler
+1) Round Robin
+2) RMS - Rate Monotonic Scheduling 
+3) EDS - Earliest Deadline First
+4) LLF - Least Laxity First
+4
+Enter tasks in following format: start,duration,interval,deadline (comma separated, no space)
+empty line if finished
+If you dont enter any data (press return without entering data) some example data will be used
+Omitted values will have default values. Eg for Round Robin it would be enough to enter the first two values 'start,duration'
+> 0,1,3,3
+> 0,2,5,5
+> 0,2,9,9
+> 
+at least 45 steps are required, 0 is the last starting process + 45 steps after all processes started
 ```
