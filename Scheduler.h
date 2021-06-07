@@ -19,6 +19,7 @@ struct Process {
 class Scheduler {
 protected:
     std::vector<Process> processes;
+
     virtual int chooseNextTask() = 0;
 
 public:

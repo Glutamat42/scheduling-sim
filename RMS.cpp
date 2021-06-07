@@ -4,36 +4,6 @@
 
 #include "RMS.h"
 
-int RMS::getLeastRequiredSteps(std::vector<Process> processes) {
-    int latestStart = 0;
-    int leastDuration = 0;
-
-    if (!processes.empty()) {
-        latestStart = processes[0].start;
-        leastDuration = processes[0].interval;
-    }
-    if (processes.size() > 1) {
-        for (int i = 1; i < processes.size(); ++i) {
-            if (processes[i].start > latestStart) {
-                latestStart = processes[i].start;
-            }
-            leastDuration = std::lcm<int, int>(leastDuration, processes[i].interval);
-        }
-    }
-
-    std::cout << "at least "
-              << latestStart + leastDuration
-              << " steps are required, "
-              << latestStart
-              << " is the last starting process + "
-              << leastDuration
-              << " steps after all processes started"
-              << std::endl;
-
-    return latestStart + leastDuration;
-}
-
-
 RMS::RMS(std::vector<Process> processes) : Scheduler(processes) {
     this->stopAfterSteps = RMS::getLeastRequiredSteps(processes);
     this->vs = VisualizeSchedule(cv::Point2i(this->stopAfterSteps, processes.size()));
@@ -72,6 +42,36 @@ RMS::RMS(std::vector<Process> processes) : Scheduler(processes) {
     this->vs.setSecondaryLabels(secLabels);
 
     this->checkLL();
+}
+
+
+int RMS::getLeastRequiredSteps(std::vector<Process> processes) {
+    int latestStart = 0;
+    int leastDuration = 0;
+
+    if (!processes.empty()) {
+        latestStart = processes[0].start;
+        leastDuration = processes[0].interval;
+    }
+    if (processes.size() > 1) {
+        for (int i = 1; i < processes.size(); ++i) {
+            if (processes[i].start > latestStart) {
+                latestStart = processes[i].start;
+            }
+            leastDuration = std::lcm<int, int>(leastDuration, processes[i].interval);
+        }
+    }
+
+    std::cout << "at least "
+              << latestStart + leastDuration
+              << " steps are required, "
+              << latestStart
+              << " is the last starting process + "
+              << leastDuration
+              << " steps after all processes started"
+              << std::endl;
+
+    return latestStart + leastDuration;
 }
 
 int RMS::chooseNextTask() {
